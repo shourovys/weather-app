@@ -7,7 +7,6 @@
 body {
   height: 100vh;
   display: flex;
-  justify-content: center;
   flex-direction: column;
   align-items: center;
   background-image: linear-gradient(45deg, #2f34c3, #2abeef);
@@ -18,11 +17,12 @@ body {
   display: flex;
   justify-content: space-around;
   align-items: center;
-  margin: 99px 3px;
+  margin: 55px 3px;
 }
 .courant-location {
 }
 .currant-location-name {
+  font-size: 2.3rem;
 }
 .courant-weather-logo {
 }
@@ -37,4 +37,6 @@ body {
   display: flex;
   align-items: center;
   font-size: large;
+  cursor: pointer;
+  font-size: 2rem;
 }

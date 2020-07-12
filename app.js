@@ -1,50 +1,78 @@
-// select dom
+// select element dom
 let courantLocationName = document.getElementById('currant-location-name')
 let courantTemperature = document.getElementById('courant-temperature')
 let weatherDescription = document.getElementById('weather-description')
+let iconId = document.getElementById('icon')
+let temperatureNumSection = document.querySelector('.temperature-number')
+let samp = document.querySelector('samp')
 
-// load data form api when page load
-window.addEventListener('load', () => {
-    let long;
-    let lat;
-    // take user location 
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(position => {
-            const { longitude, latitude } = position.coords
-            long = longitude
-            lat = latitude
-            // fetch data form api
-            const key = "7b4f5ff562788cff6754ecec1fbc774c"
-            const proxy = 'https://cors-anywhere.herokuapp.com/'
-            const api = `${proxy}api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${long}&appid=${key}`
-            fetch(api)
-                .then(response => response.json())
-                .then(data => {
-                    console.log(data)
-                    let weather = data.weather[0].main
+
+let long;
+let lat;
+// take user location 
+if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(position => {
+        const { longitude, latitude } = position.coords
+        long = longitude
+        lat = latitude
+        // fetch data form api
+        const key = "7b4f5ff562788cff6754ecec1fbc774c"
+        const proxy = 'https://cors-anywhere.herokuapp.com/'
+        let api = `${proxy}api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${long}&appid=${key}`
+        fetch(api)
+            .then(response => response.json())
+            .then(data => {
+                console.log(data)
+                // set data to dom form api
+                courantLocationName.innerText = data.name;
+                console.log();
+                weatherDescription.innerText = data.weather[0].description;
+                courantTemperature.innerText = Math.floor(data.main.temp - 273)//.toFixed(2);
+                samp.innerHTML = '&degC'
+
+                // show icon
+                let weather = data.weather[0].main.toUpperCase()
+                if (weather = "CLOUDS") {
+                    weather = "CLOUDY"
+                    showIcon(iconId, weather)
+                }
+                else {
                     console.log(weather);
+                    showIcon(iconId, weather)
+                }
 
-                    courantLocationName.innerText = data.name;
-                    console.log();
-                    weatherDescription.innerText = data.weather[0].description;
-                    courantTemperature.innerText = data.main.temp;
-                    let icon;
-                    if (weather == 'Clouds') {
-                        icon = 'PARTLY_CLOUDY_NIGHT'
+                // this function make my convert fahrenheit to Celsius 
+                temperatureNumSection.addEventListener('click', () => {
+                    let temperatureNum = temperatureNumSection.children[0]
+                    let span = temperatureNumSection.children[1]
+
+                    if (span.innerText == "°C") {
+                        span.innerHTML = "&degF"
+                        // formula for Fahrenheit
+                        let fahrenheit = (9 / 5) * temperatureNum.innerText + 32
+                        temperatureNum.innerText = Math.floor(fahrenheit)
+
                     }
-                    showIcon(icon, document.getElementById('icon'))
+                    else if (span.innerText == "°F") {
+                        span.innerHTML = "&degC"
+                        courantTemperature.innerText = Math.floor(data.main.temp - 273)
+                    }
 
                 })
-        });
-    }
+            })
+    });
+}
 
-    else {
-        x.innerHTML = "Geolocation is not supported by this browser.";
-    }
+else {
+    x.innerHTML = "Geolocation is not supported by this browser.";
+}
 
-    function showIcon(icon, iconId) {
-        const skycons = new Skycons({ "color": "white" });
-        skycons.play();
-        return skycons.set(iconId, skycons[icon])
-    }
-})
+function showIcon(iconId, weather) {
+    const skycons = new Skycons({ "color": "white" });
+    skycons.add(iconId, Skycons[weather]);
+    skycons.play();
+}
+
+
+
+
